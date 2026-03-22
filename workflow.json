@@ -1,0 +1,2056 @@
+{
+  "name": "Telegram Job Apply Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "id": "12bb048b-616e-4523-ba1e-337f5f9e2459",
+      "name": "Telegram Bot",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        992
+      ],
+      "webhookId": "3b14cf46-8d0e-4be0-8020-cc90c7879163",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "chatId",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "number"
+            },
+            {
+              "id": "2",
+              "name": "messageText",
+              "value": "={{ $json.message.text ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "3",
+              "name": "hasDocument",
+              "value": "={{ $json.message.document ? true : false }}",
+              "type": "boolean"
+            },
+            {
+              "id": "4",
+              "name": "fileId",
+              "value": "={{ $json.message.document?.file_id ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "5",
+              "name": "callbackData",
+              "value": "={{ $json.callback_query?.data ?? \"\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d2be1862-4ab9-4696-9056-1500ecf670ed",
+      "name": "Parse Command",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        464,
+        992
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.messageText }}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e9903ea5-6462-4427-ba0b-1c46bddc5560"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "start"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.hasDocument }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true"
+                    },
+                    "id": "6ce10a90-4453-44f6-b6f3-e8f25b4e17c0"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "cv_upload"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callbackData }}",
+                    "rightValue": "APPLY",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "16bdcf75-4fd3-4991-b46a-873a72ab6345"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "apply"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callbackData }}",
+                    "rightValue": "SKIP",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "41f009a1-f062-4192-a925-9a7b6714bb89"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "skip"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callbackData }}",
+                    "rightValue": "UPDATE_CV",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "4dd9f825-3144-4532-ade8-c753594fe7ac"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "update_cv"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callbackData }}",
+                    "rightValue": "RECHECK",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "5d1f766a-74ac-44ad-92e3-e499a7c7f906"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "recheck"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callbackData }}",
+                    "rightValue": "YES",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "23374f9a-5c0b-4781-9757-09661c2e9d0c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "confirm_submit"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callbackData }}",
+                    "rightValue": "CANCEL",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "89b615b6-ee2b-4f29-b2a9-2425bbbf093a"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "cancel"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "job_details"
+        }
+      },
+      "id": "107b9fd5-ea8c-4d2f-954c-34c163ad0df5",
+      "name": "Route Command",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        688,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "=Welcome to Job Apply Assistant!\n\nSend me job details in this format:\nJob Title: [title]\nCompany: [company]\nLocation: [location]\nJob Link: [url]\nCareers Page: [url]\nDescription: [full description]\n\nOr upload your CV to get started.",
+        "additionalFields": {}
+      },
+      "id": "a369caad-2e91-4262-8e0d-bce8821f046f",
+      "name": "Send Welcome",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        912,
+        208
+      ],
+      "webhookId": "e49c3630-8c7a-472f-890d-402c32705f30",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.fileId }}",
+        "additionalFields": {}
+      },
+      "id": "3353d1d9-780d-4e68-b1d4-caf37082e032",
+      "name": "Download CV File",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        912,
+        400
+      ],
+      "webhookId": "65296f27-5a67-45c0-98e1-c8149da67852",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "YOUR_CANDIDATE_PROFILES_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "candidate_profiles",
+          "cachedResultUrl": "/projects/YOUR_PROJECT_ID/datatables/YOUR_CANDIDATE_PROFILES_TABLE_ID"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "chatId",
+              "keyValue": "={{ $('Parse Command').item.json.chatId }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chatId": "={{ $('Parse Command').item.json.chatId }}",
+            "cv_file_id": "={{ $(\"Download CV File\").item.json.file_id ?? $(\"Parse Command\").item.json.fileId }}",
+            "cv_file_name": "={{ $(\"Download CV File\").item.json.file_path?.split(\"/\").pop() ?? \"cv.pdf\" }}",
+            "cv_uploaded_at": "={{ $now.toISO() }}",
+            "cv_version": "={{ $json.cv_version ? ($json.cv_version + 1) : 1 }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "chatId",
+              "displayName": "chatId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "cv_file_id",
+              "displayName": "cv_file_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "cv_file_name",
+              "displayName": "cv_file_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "cv_uploaded_at",
+              "displayName": "cv_uploaded_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "cv_version",
+              "displayName": "cv_version",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "9d2a2b5b-c652-4e29-9f1e-6bdf0e178af2",
+      "name": "Store CV & Profile",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "=\u2705 CV uploaded successfully!\nVersion: {{ $json.cvVersion }}\n\nNow send me job details to analyze.",
+        "additionalFields": {}
+      },
+      "id": "67b637d5-ec5d-4e65-b9cf-9e820b029961",
+      "name": "Confirm CV Upload",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1488,
+        400
+      ],
+      "webhookId": "16bf35ab-ede5-4a85-abf8-e1fe17b5bc84",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "YOUR_JOB_APPLICATIONS_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "job_applications",
+          "cachedResultUrl": "/projects/YOUR_PROJECT_ID/datatables/YOUR_JOB_APPLICATIONS_TABLE_ID"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "application_key",
+              "keyValue": "={{ $('Extract Job Details').item.json.company + '|' + $('Extract Job Details').item.json.jobTitle + '|' + $('Extract Job Details').item.json.jobLink }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "application_key": "={{ $('Extract Job Details').item.json.company + '|' + $('Extract Job Details').item.json.jobTitle + '|' + $('Extract Job Details').item.json.jobLink }}",
+            "chatId": "={{ $('Parse Command').item.json.chatId }}",
+            "company": "={{ $('Extract Job Details').item.json.company }}",
+            "role": "={{ $('Extract Job Details').item.json.jobTitle }}",
+            "source_link": "={{ $('Extract Job Details').item.json.jobLink }}",
+            "status": "waiting_approval",
+            "logged_at": "={{ $now }}",
+            "notes": "Waiting for user approval to continue application"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "chatId",
+              "displayName": "chatId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "source_link",
+              "displayName": "source_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "careers_link",
+              "displayName": "careers_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "fit_score",
+              "displayName": "fit_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "apply_decision",
+              "displayName": "apply_decision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "logged_at",
+              "displayName": "logged_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "cv_version",
+              "displayName": "cv_version",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "application_key",
+              "displayName": "application_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "185e1900-a3a1-427b-bd2e-c70177e1dd7c",
+      "name": "Update Status: Waiting Approval",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        912,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $(\"Parse Command\").item.json.chatId }}",
+        "text": "=\ud83d\ude80 Starting application process for {{ $(\"Analyze Job Requirements\").item.json.output.company }}...\n\nI will navigate to the careers page and fill the application form.\nIf I encounter any issues, I will notify you immediately.",
+        "additionalFields": {}
+      },
+      "id": "c278d1d6-4c2b-4e93-9e15-71169ff357f2",
+      "name": "Notify Application Start",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        1280
+      ],
+      "webhookId": "40711dfe-1484-4f9e-ab10-1857ae5de6b7",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $(\"Get Stored CV\").item.json.chatId }}",
+        "text": "=\ud83d\udccb Application Form Preview\n\nCompany: {{ $(\"Analyze Job Requirements\").item.json.output.company }}\nPosition: {{ $(\"Analyze Job Requirements\").item.json.output.jobTitle }}\n\nFilled Fields:\nName: {{ $json.filledFields.name }}\nEmail: {{ $json.filledFields.email }}\nPhone: {{ $json.filledFields.phone }}\n\nCV Version: {{ $(\"Get Stored CV\").item.json.cvVersion }}\n\nPlease review and confirm:",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "\u2705 YES - Submit",
+                    "additionalFields": {
+                      "callback_data": "YES"
+                    }
+                  },
+                  {
+                    "text": "\u274c CANCEL",
+                    "additionalFields": {
+                      "callback_data": "CANCEL"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "id": "0026c89f-771d-44b2-8d75-0a94e63c2835",
+      "name": "Send Form Preview",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1776,
+        1280
+      ],
+      "webhookId": "83a980c8-73cc-4ae9-9636-55a2aef14acb",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "YOUR_JOB_APPLICATIONS_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "job_applications",
+          "cachedResultUrl": "/projects/YOUR_PROJECT_ID/datatables/YOUR_JOB_APPLICATIONS_TABLE_ID"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "application_key",
+              "keyValue": "={{ $('Extract Job Details').item.json.company + '|' + $('Extract Job Details').item.json.jobTitle + '|' + $('Extract Job Details').item.json.jobLink }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "application_key": "={{ $('Extract Job Details').item.json.company + '|' + $('Extract Job Details').item.json.jobTitle + '|' + $('Extract Job Details').item.json.jobLink }}",
+            "chatId": "={{ $('Parse Command').item.json.chatId }}",
+            "company": "={{ $('Extract Job Details').item.json.company }}",
+            "role": "={{ $('Extract Job Details').item.json.jobTitle }}",
+            "source_link": "={{ $('Extract Job Details').item.json.jobLink }}",
+            "status": "skipped",
+            "logged_at": "={{ $now }}",
+            "notes": "Skipped by user"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "chatId",
+              "displayName": "chatId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "source_link",
+              "displayName": "source_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "careers_link",
+              "displayName": "careers_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "fit_score",
+              "displayName": "fit_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "apply_decision",
+              "displayName": "apply_decision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "logged_at",
+              "displayName": "logged_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "cv_version",
+              "displayName": "cv_version",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "application_key",
+              "displayName": "application_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "cd84919e-31bb-401a-9e8b-12c12a3a0891",
+      "name": "Update Status: Skipped",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        912,
+        1088
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $(\"Parse Command\").item.json.chatId }}",
+        "text": "\u2705 Job application skipped. Send me another job posting when ready.",
+        "additionalFields": {}
+      },
+      "id": "f439b6b2-17ed-48b5-aa26-21ae8885f6c9",
+      "name": "Confirm Skipped",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        1088
+      ],
+      "webhookId": "a03858bb-f1bf-4542-a860-e97069a164d3",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $(\"Parse Command\").item.json.chatId }}",
+        "text": "=\ud83d\udcdd CV Improvement Recommendations\n\n\u2705 Can Add Now (if true):\n{{ $(\"Compare Job with CV\").item.json.output.cvImprovements.canAddNow.join(\"\\n- \") }}\n\n\ud83d\udcda Need to Learn First:\n{{ $(\"Compare Job with CV\").item.json.output.cvImprovements.needToLearn.join(\"\\n- \") }}\n\n\ud83d\udeab Do NOT Claim (unless real):\n{{ $(\"Compare Job with CV\").item.json.output.cvImprovements.doNotClaim.join(\"\\n- \") }}\n\nUpload updated CV when ready, or choose RECHECK to re-analyze.",
+        "additionalFields": {}
+      },
+      "id": "80a07541-0675-40d5-9bfc-3d7e63e35be1",
+      "name": "Send CV Recommendations",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        912,
+        896
+      ],
+      "webhookId": "2a317f30-c062-460c-ab9e-24a4876be7d4",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "chatId",
+              "value": "={{ $json.chatId }}",
+              "type": "number"
+            },
+            {
+              "id": "2",
+              "name": "jobText",
+              "value": "={{ $json.messageText }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3e60856e-513f-4d1b-88ee-591cef146adb",
+      "name": "Extract Job Details",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        912,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze this job posting and extract structured information:\n\n{{ $json.jobText }}\n\nExtract:\n- Job title\n- Company name\n- Location\n- Job link\n- Careers page link\n- Required skills (array)\n- Preferred skills (array)\n- Seniority level\n- Experience level (years)\n- Tools/technologies (array)\n- Work mode (remote/hybrid/onsite)\n- Full job description",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a job posting analyzer. Extract all relevant information from job postings accurately."
+        }
+      },
+      "id": "35131ee8-ad2f-4a6e-acbe-d9deed421a69",
+      "name": "Analyze Job Requirements",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1136,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "id": "60a21973-80c2-47b0-8aa9-6659e9218031",
+      "name": "OpenAI Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1152,
+        816
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_OPENAI_CREDENTIAL_ID",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": {
+          "jobTitle": "Senior Developer",
+          "company": "TechCorp",
+          "location": "Remote",
+          "jobLink": "https://example.com/job",
+          "careersPageLink": "https://example.com/careers",
+          "requiredSkills": [
+            "JavaScript",
+            "React",
+            "Node.js"
+          ],
+          "preferredSkills": [
+            "TypeScript",
+            "AWS"
+          ],
+          "seniority": "Senior",
+          "experienceYears": 5,
+          "tools": [
+            "Git",
+            "Docker"
+          ],
+          "workMode": "remote",
+          "fullDescription": "Full job description text..."
+        }
+      },
+      "id": "5d314738-7a0f-4a6c-9aa6-59b99561ee6c",
+      "name": "Job Data Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1280,
+        816
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "YOUR_CANDIDATE_PROFILES_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "candidate_profiles",
+          "cachedResultUrl": "/projects/YOUR_PROJECT_ID/datatables/YOUR_CANDIDATE_PROFILES_TABLE_ID"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "chatId",
+              "keyValue": "={{ $('Parse Command').item.json.chatId }}"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "id": "a7e41b59-3748-49a7-97f0-27779a9cf9d8",
+      "name": "Get Stored CV",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1488,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Compare this job posting with the candidate profile and generate a fit analysis.\n\nJob Requirements:\n{{ $(\"Analyze Job Requirements\").item.json.output }}\n\nCandidate Profile:\nName: {{ $json.fullName }}\nEmail: {{ $json.email }}\nCV Version: {{ $json.cvVersion }}\n\nProvide:\n- fitScore (0-100)\n- matchedStrengths (array of strings)\n- missingSkills (array of strings)\n- riskyGaps (array of strings)\n- recommendation (APPLY / UPDATE_CV / SKIP)\n- reasoning (brief explanation)\n- cvImprovements (object with canAddNow, needToLearn, doNotClaim arrays)",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an honest career advisor. Be truthful about skill gaps. Never recommend claiming skills the candidate does not have."
+        }
+      },
+      "id": "ed5e2b92-b5bd-4ec4-9fa6-5cc645934f20",
+      "name": "Compare Job with CV",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1712,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": {
+          "fitScore": 85,
+          "matchedStrengths": [
+            "Strong JavaScript skills",
+            "React experience"
+          ],
+          "missingSkills": [
+            "TypeScript",
+            "AWS"
+          ],
+          "riskyGaps": [
+            "No cloud experience mentioned"
+          ],
+          "recommendation": "APPLY",
+          "reasoning": "Strong match with core requirements",
+          "cvImprovements": {
+            "canAddNow": [
+              "Highlight React projects more prominently"
+            ],
+            "needToLearn": [
+              "TypeScript basics",
+              "AWS fundamentals"
+            ],
+            "doNotClaim": [
+              "Senior AWS architect experience"
+            ]
+          }
+        }
+      },
+      "id": "1a5c589d-d03b-488c-9d46-208c611f4fee",
+      "name": "Fit Analysis Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1792,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "YOUR_JOB_APPLICATIONS_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "job_applications",
+          "cachedResultUrl": "/projects/YOUR_PROJECT_ID/datatables/YOUR_JOB_APPLICATIONS_TABLE_ID"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chatId": "={{ $('Parse Command').item.json.chatId }}",
+            "company": "={{ $('Analyze Job Requirements').item.json.company || $('Extract Job Details').item.json.company }}",
+            "location": "={{ $('Analyze Job Requirements').item.json.location || $('Extract Job Details').item.json.location }}",
+            "fit_score": "={{ $('Compare Job with CV').item.json.fit_score }}",
+            "cv_version": "={{ $('Get Stored CV').item.json.cv_version }}",
+            "role": "={{ $('Analyze Job Requirements').item.json.jobTitle || $('Extract Job Details').item.json.jobTitle }}",
+            "source_link": "={{ $('Extract Job Details').item.json.jobLink }}",
+            "careers_link": "={{ $('Extract Job Details').item.json.careersPage }}",
+            "apply_decision": "={{ $('Compare Job with CV').item.json.apply_decision }}",
+            "status": "analyzed",
+            "logged_at": "={{ $now }}",
+            "notes": "initial analysis"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "chatId",
+              "displayName": "chatId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "source_link",
+              "displayName": "source_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "careers_link",
+              "displayName": "careers_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "fit_score",
+              "displayName": "fit_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "apply_decision",
+              "displayName": "apply_decision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "logged_at",
+              "displayName": "logged_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "cv_version",
+              "displayName": "cv_version",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "ec591d25-5203-4bf4-9e49-2a41d6999f32",
+      "name": "Log Job Application",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2064,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $(\"Get Stored CV\").item.json.chatId }}",
+        "text": "=\ud83d\udcca Job Fit Analysis\n\n\ud83c\udfe2 {{ $(\"Analyze Job Requirements\").item.json.output.company }} - {{ $(\"Analyze Job Requirements\").item.json.output.jobTitle }}\n\ud83d\udccd {{ $(\"Analyze Job Requirements\").item.json.output.location }}\n\n\ud83c\udfaf Fit Score: {{ $(\"Compare Job with CV\").item.json.output.fitScore }}/100\n\n\u2705 Matched Strengths:\n{{ $(\"Compare Job with CV\").item.json.output.matchedStrengths.join(\"\\n- \") }}\n\n\u274c Missing Skills:\n{{ $(\"Compare Job with CV\").item.json.output.missingSkills.join(\"\\n- \") }}\n\n\u26a0\ufe0f Risky Gaps:\n{{ $(\"Compare Job with CV\").item.json.output.riskyGaps.join(\"\\n- \") }}\n\n\ud83d\udca1 Recommendation: {{ $(\"Compare Job with CV\").item.json.output.recommendation }}\n\ud83d\udcdd {{ $(\"Compare Job with CV\").item.json.output.reasoning }}\n\nWhat would you like to do?",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "\u2705 APPLY",
+                    "additionalFields": {
+                      "callback_data": "APPLY"
+                    }
+                  },
+                  {
+                    "text": "\u274c SKIP",
+                    "additionalFields": {
+                      "callback_data": "SKIP"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "\ud83d\udcdd UPDATE CV",
+                    "additionalFields": {
+                      "callback_data": "UPDATE_CV"
+                    }
+                  },
+                  {
+                    "text": "\ud83d\udd04 RECHECK",
+                    "additionalFields": {
+                      "callback_data": "RECHECK"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "id": "737d8b10-e865-450f-938c-99f4c87e0089",
+      "name": "Send Fit Analysis",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2288,
+        704
+      ],
+      "webhookId": "e9b7ed3a-a760-4e6d-a304-d3046435979c",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "YOUR_JOB_APPLICATIONS_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "job_applications",
+          "cachedResultUrl": "/projects/YOUR_PROJECT_ID/datatables/YOUR_JOB_APPLICATIONS_TABLE_ID"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "application_key",
+              "keyValue": "={{ $('Extract Job Details').item.json.company + '|' + $('Extract Job Details').item.json.jobTitle + '|' + $('Extract Job Details').item.json.jobLink }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "application_key": "={{ $('Extract Job Details').item.json.company + '|' + $('Extract Job Details').item.json.jobTitle + '|' + $('Extract Job Details').item.json.jobLink }}",
+            "chatId": "={{ $('Parse Command').item.json.chatId }}",
+            "company": "={{ $('Extract Job Details').item.json.company }}",
+            "role": "={{ $('Extract Job Details').item.json.jobTitle }}",
+            "source_link": "={{ $('Extract Job Details').item.json.jobLink }}",
+            "status": "submitted",
+            "logged_at": "={{ $now }}",
+            "notes": "Application submitted successfully"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "chatId",
+              "displayName": "chatId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "source_link",
+              "displayName": "source_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "careers_link",
+              "displayName": "careers_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "fit_score",
+              "displayName": "fit_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "apply_decision",
+              "displayName": "apply_decision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "logged_at",
+              "displayName": "logged_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "cv_version",
+              "displayName": "cv_version",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "application_key",
+              "displayName": "application_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "b2c931f5-367e-4cc9-a202-9fd57b04bbab",
+      "name": "Update Status: Submitted",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        1472
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $(\"Get Stored CV\").item.json.chatId }}",
+        "text": "=\u2705 Application Submitted Successfully!\n\n\ud83c\udfe2 Company: {{ $(\"Submit Application Final\").item.json.company }}\n\ud83d\udcbc Role: {{ $(\"Submit Application Final\").item.json.role }}\n\ud83d\udcc5 Date/Time: {{ $(\"Submit Application Final\").item.json.submitted_at }}\n\ud83d\udcc4 CV Version: {{ $(\"Get Stored CV\").item.json.cv_version }}\n\ud83d\udd22 Confirmation: {{ $(\"Submit Application Final\").item.json.confirmation_text }}\n\u2705 Status: Submitted\n\nGood luck! \ud83c\udf40",
+        "additionalFields": {}
+      },
+      "id": "dc2dd7fa-b7d1-4a72-b565-afa2b3911638",
+      "name": "Send Submission Confirmation",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1488,
+        1472
+      ],
+      "webhookId": "4707b994-8f31-4121-afc0-3ead67a9bfd1",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "YOUR_JOB_APPLICATIONS_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "job_applications",
+          "cachedResultUrl": "/projects/YOUR_PROJECT_ID/datatables/YOUR_JOB_APPLICATIONS_TABLE_ID"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "application_key",
+              "keyValue": "={{ $('Extract Job Details').item.json.company + '|' + $('Extract Job Details').item.json.jobTitle + '|' + $('Extract Job Details').item.json.jobLink }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "application_key": "={{ $('Extract Job Details').item.json.company + '|' + $('Extract Job Details').item.json.jobTitle + '|' + $('Extract Job Details').item.json.jobLink }}",
+            "chatId": "={{ $('Parse Command').item.json.chatId }}",
+            "company": "={{ $('Extract Job Details').item.json.company }}",
+            "role": "={{ $('Extract Job Details').item.json.jobTitle }}",
+            "source_link": "={{ $('Extract Job Details').item.json.jobLink }}",
+            "status": "cancelled",
+            "logged_at": "={{ $now }}",
+            "notes": "Application cancelled by user"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "chatId",
+              "displayName": "chatId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "source_link",
+              "displayName": "source_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "careers_link",
+              "displayName": "careers_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "fit_score",
+              "displayName": "fit_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "apply_decision",
+              "displayName": "apply_decision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "logged_at",
+              "displayName": "logged_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "cv_version",
+              "displayName": "cv_version",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "application_key",
+              "displayName": "application_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "3c8fbdbc-63f7-4c0a-acac-55eb7ef68abf",
+      "name": "Update Status: Cancelled",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        912,
+        1664
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $(\"Parse Command\").item.json.chatId }}",
+        "text": "\u274c Application cancelled. No submission was made.",
+        "additionalFields": {}
+      },
+      "id": "c66c58d4-a1ef-453b-84dd-80f09f54b601",
+      "name": "Confirm Cancelled",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        1664
+      ],
+      "webhookId": "19ab3ba1-1d26-4159-93ac-799f8c1abbcd",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Browser automation for job application form filling\n// This is a placeholder implementation - requires Browserless or Puppeteer service\n\nconst careersPage = $input.item.json.careersPageLink || \n                    $('Extract Job Details').item.json.careersPage || \n                    $('Extract Job Details').item.json.careers_page || \n                    $('Extract Job Details').item.json.careersLink;\n\nconst company = $('Extract Job Details').item.json.company;\nconst jobTitle = $('Extract Job Details').item.json.jobTitle;\nconst location = $('Extract Job Details').item.json.location;\nconst jobLink = $('Extract Job Details').item.json.jobLink;\n\n// Get stored CV and profile data\nconst cvData = $('Get Stored CV').item.json;\nconst fullName = cvData.full_name || cvData.fullName || '';\nconst email = cvData.email || '';\nconst phone = cvData.phone || '';\nconst cityCountry = cvData.city_country || cvData.cityCountry || '';\nconst linkedinUrl = cvData.linkedin_url || cvData.linkedinUrl || '';\nconst githubUrl = cvData.github_url || cvData.githubUrl || '';\nconst portfolioUrl = cvData.portfolio_url || cvData.portfolioUrl || '';\nconst cvFileId = cvData.cv_file_id || '';\n\n// TODO: Replace this with actual Browserless/Puppeteer API call\n// Example endpoint: https://chrome.browserless.io/content\n// Requires: BROWSERLESS_API_KEY credential\n\n// Simulated automation logic (replace with real browser automation)\nconst automationResult = {\n  status: 'preview_ready',\n  company: company,\n  role: jobTitle,\n  careersPage: careersPage,\n  \n  // Fields that would be filled\n  filledFields: {\n    name: fullName || 'MISSING',\n    email: email || 'MISSING',\n    phone: phone || 'MISSING',\n    location: cityCountry || 'MISSING',\n    linkedin: linkedinUrl || 'OPTIONAL',\n    github: githubUrl || 'OPTIONAL',\n    portfolio: portfolioUrl || 'OPTIONAL',\n    cvUploaded: cvFileId ? 'YES' : 'MISSING'\n  },\n  \n  // Check for blockers\n  blocker: null,\n  blockerMessage: null,\n  \n  // Validation\n  missingRequired: [],\n  preview_ready: true\n};\n\n// Validate required fields\nif (!fullName) automationResult.missingRequired.push('Full Name');\nif (!email) automationResult.missingRequired.push('Email');\nif (!phone) automationResult.missingRequired.push('Phone');\nif (!cvFileId) automationResult.missingRequired.push('CV File');\n\n// Check for blockers\nif (!careersPage) {\n  automationResult.blocker = 'no_careers_page';\n  automationResult.blockerMessage = '\u274c No careers page URL provided. Please include the careers page link in your job details.';\n  automationResult.preview_ready = false;\n}\n\nif (automationResult.missingRequired.length > 0) {\n  automationResult.blocker = 'missing_profile_data';\n  automationResult.blockerMessage = '\u274c Missing required profile data: ' + automationResult.missingRequired.join(', ') + '. Please update your profile first.';\n  automationResult.preview_ready = false;\n}\n\n// TODO: Implement actual browser automation here\n// Steps:\n// 1. Call Browserless API with careersPage URL\n// 2. Use Puppeteer commands to:\n//    - Navigate to careers page\n//    - Search for vacancy by company + jobTitle + location\n//    - Click on matching job posting\n//    - Locate application form\n//    - Fill standard fields (name, email, phone, etc.)\n//    - Upload CV file\n//    - Take screenshot of filled form\n// 3. Detect blockers:\n//    - Captcha: return blocker = 'captcha_detected'\n//    - Login required: return blocker = 'login_required'\n//    - Vacancy not found: return blocker = 'vacancy_not_found'\n//    - Unknown custom question: return blocker = 'unknown_question' with question text\n// 4. DO NOT click submit button\n// 5. Return preview data with screenshot\n\nreturn automationResult;"
+      },
+      "id": "961a4292-cb00-46e6-a812-7dfb2cf4d730",
+      "name": "Automate Application",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1488,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Final submission step - only runs after user confirms YES\n// This step clicks the submit button on the already-filled form\n\nconst careersPage = $('Extract Job Details').item.json.careersPageLink || \n                    $('Extract Job Details').item.json.careersPage || \n                    $('Extract Job Details').item.json.careers_page || \n                    $('Extract Job Details').item.json.careersLink;\n\nconst company = $('Extract Job Details').item.json.company;\nconst jobTitle = $('Extract Job Details').item.json.jobTitle;\nconst jobLink = $('Extract Job Details').item.json.jobLink;\n\n// Check if preview was completed successfully\nconst automationData = $('Automate Application').item.json;\nconst previewReady = automationData?.preview_ready || false;\nconst blocker = automationData?.blocker || null;\n\n// Initialize result\nconst submissionResult = {\n  submit_success: false,\n  submitted_at: null,\n  company: company,\n  role: jobTitle,\n  confirmation_text: null,\n  screenshot_url: null,\n  failure_reason: null\n};\n\n// Validate prerequisites\nif (!previewReady) {\n  submissionResult.failure_reason = 'preview_not_completed';\n  return submissionResult;\n}\n\nif (blocker) {\n  submissionResult.failure_reason = 'blocker_present: ' + blocker;\n  return submissionResult;\n}\n\nif (!careersPage) {\n  submissionResult.failure_reason = 'no_careers_page_url';\n  return submissionResult;\n}\n\n// TODO: Replace this with actual Browserless/Puppeteer API call\n// Example endpoint: https://chrome.browserless.io/function\n// Requires: BROWSERLESS_API_KEY credential\n\n// Simulated final submission logic (replace with real browser automation)\n// In production, this should:\n// 1. Restore or navigate back to the filled form\n// 2. Verify form is still filled correctly\n// 3. Locate the submit button (common selectors: button[type=\"submit\"], input[type=\"submit\"], button containing \"Submit\", \"Apply\", \"Send\")\n// 4. Click the submit button\n// 5. Wait for confirmation page or success message\n// 6. Extract confirmation text/number if available\n// 7. Take screenshot of confirmation page\n// 8. Return success status\n\n// Handle potential errors:\n// - Session expired: return failure_reason = 'session_expired_or_form_unavailable'\n// - Submit button not found: return failure_reason = 'submit_button_not_found'\n// - Network error: return failure_reason = 'network_error'\n// - Captcha appeared: return failure_reason = 'captcha_on_submit'\n// - Form validation error: return failure_reason = 'form_validation_failed'\n\ntry {\n  // Simulated successful submission\n  submissionResult.submit_success = true;\n  submissionResult.submitted_at = new Date().toISOString();\n  submissionResult.confirmation_text = 'Application submitted successfully. Reference: SIM-' + Date.now();\n  submissionResult.screenshot_url = null; // Would contain actual screenshot URL from Browserless\n  \n  // TODO: Actual Browserless API call example:\n  /*\n  const browserlessApiKey = 'YOUR_BROWSERLESS_API_KEY';\n  const browserlessUrl = 'https://chrome.browserless.io/function';\n  \n  const puppeteerScript = `\n    module.exports = async ({ page }) => {\n      // Navigate back to form or verify we're still on it\n      await page.goto('${careersPage}', { waitUntil: 'networkidle2' });\n      \n      // Wait for submit button\n      const submitButton = await page.waitForSelector(\n        'button[type=\"submit\"], input[type=\"submit\"], button:contains(\"Submit\"), button:contains(\"Apply\")',\n        { timeout: 10000 }\n      );\n      \n      if (!submitButton) {\n        return { success: false, error: 'submit_button_not_found' };\n      }\n      \n      // Click submit\n      await submitButton.click();\n      \n      // Wait for confirmation (adjust selector based on actual site)\n      await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 15000 });\n      \n      // Extract confirmation text\n      const confirmationText = await page.evaluate(() => {\n        const selectors = ['.confirmation', '.success-message', '[class*=\"confirm\"]', '[class*=\"success\"]'];\n        for (const selector of selectors) {\n          const el = document.querySelector(selector);\n          if (el) return el.innerText;\n        }\n        return document.body.innerText.substring(0, 500);\n      });\n      \n      // Take screenshot\n      const screenshot = await page.screenshot({ encoding: 'base64', fullPage: false });\n      \n      return {\n        success: true,\n        confirmationText: confirmationText,\n        screenshot: screenshot,\n        submittedAt: new Date().toISOString()\n      };\n    };\n  `;\n  \n  const response = await fetch(browserlessUrl, {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${browserlessApiKey}`\n    },\n    body: JSON.stringify({\n      code: puppeteerScript,\n      context: {}\n    })\n  });\n  \n  const result = await response.json();\n  \n  if (result.success) {\n    submissionResult.submit_success = true;\n    submissionResult.submitted_at = result.submittedAt;\n    submissionResult.confirmation_text = result.confirmationText;\n    submissionResult.screenshot_url = 'data:image/png;base64,' + result.screenshot;\n  } else {\n    submissionResult.submit_success = false;\n    submissionResult.failure_reason = result.error || 'unknown_error';\n  }\n  */\n  \n} catch (error) {\n  submissionResult.submit_success = false;\n  submissionResult.failure_reason = 'exception: ' + error.message;\n}\n\nreturn submissionResult;"
+      },
+      "id": "8912c8da-0419-4f85-86b6-84159be22468",
+      "name": "Submit Application Final",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        912,
+        1472
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Bot": {
+      "main": [
+        [
+          {
+            "node": "Parse Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Command": {
+      "main": [
+        [
+          {
+            "node": "Route Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Command": {
+      "main": [
+        [
+          {
+            "node": "Send Welcome",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download CV File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Status: Waiting Approval",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Status: Skipped",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send CV Recommendations",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Job Details",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Submit Application Final",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Status: Cancelled",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download CV File": {
+      "main": [
+        [
+          {
+            "node": "Store CV & Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store CV & Profile": {
+      "main": [
+        [
+          {
+            "node": "Confirm CV Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status: Waiting Approval": {
+      "main": [
+        [
+          {
+            "node": "Notify Application Start",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Application Start": {
+      "main": [
+        [
+          {
+            "node": "Automate Application",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status: Skipped": {
+      "main": [
+        [
+          {
+            "node": "Confirm Skipped",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Job Details": {
+      "main": [
+        [
+          {
+            "node": "Analyze Job Requirements",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Job Requirements": {
+      "main": [
+        [
+          {
+            "node": "Get Stored CV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Analyze Job Requirements",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Compare Job with CV",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Job Data Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Analyze Job Requirements",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Stored CV": {
+      "main": [
+        [
+          {
+            "node": "Compare Job with CV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compare Job with CV": {
+      "main": [
+        [
+          {
+            "node": "Log Job Application",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fit Analysis Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Compare Job with CV",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Job Application": {
+      "main": [
+        [
+          {
+            "node": "Send Fit Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status: Submitted": {
+      "main": [
+        [
+          {
+            "node": "Send Submission Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status: Cancelled": {
+      "main": [
+        [
+          {
+            "node": "Confirm Cancelled",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Automate Application": {
+      "main": [
+        [
+          {
+            "node": "Send Form Preview",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submit Application Final": {
+      "main": [
+        [
+          {
+            "node": "Update Status: Submitted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "7749e10b-1987-4bef-8d54-8ded66b100c0",
+  "meta": {
+    "instanceId": "YOUR_INSTANCE_ID"
+  },
+  "id": "DET3MaAsoEdb4Jzq",
+  "tags": []
+}
